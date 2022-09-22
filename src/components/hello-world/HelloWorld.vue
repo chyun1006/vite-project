@@ -1,10 +1,14 @@
-<script setup lang="ts">
-import { ref } from "vue";
-interface props {
-  msg: string;
-}
+<script lang="ts">
+import { defineComponent } from "vue";
 
-defineProps<props>();
+export default defineComponent({
+  data() {
+    return {};
+  },
+  props: {
+    msg: String,
+  },
+});
 </script>
 
 <template>

@@ -1,7 +1,7 @@
-import { Component } from "vue";
+import { Component, AsyncComponentLoader } from "vue";
 export default interface Widget {
   name?: string;
-  component?: Component;
-  setComponent?: Component;
+  component?: Function;
+  setComponent: AsyncComponentLoader<any>;
   configValue?: object;
 }

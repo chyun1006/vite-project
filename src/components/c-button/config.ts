@@ -10,8 +10,8 @@ const defaultValue: BtnConfig = {
 
 const config: Widget = {
   name: "按钮",
-  component: Button,
-  setComponent: SetView,
+  component: () => import("./c-button.vue"),
+  setComponent: () => import("./setting-view.vue"),
   configValue: defaultValue,
 };
 

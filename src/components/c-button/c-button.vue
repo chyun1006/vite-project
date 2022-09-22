@@ -1,6 +1,6 @@
-<template>颜色：{{ config.color }} 大小：{{ config.size }}</template>
+<template>颜色：{{ color }} 大小：{{ size }}</template>
 
 <script setup lang="ts">
 import BtnConfig from "./btn-config-model";
-defineProps<{ config: BtnConfig }>();
+defineProps<{ color: string; size: string }>();
 </script>

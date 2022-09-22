@@ -1,36 +1,49 @@
 <script setup lang="ts">
-import { reactive, ref, markRaw } from "vue";
-import WidgetList from "./config/widget.config";
+import { reactive, h, ref, render, defineAsyncComponent } from "vue";
+import WidgetGroups from "./config/widget.config";
 import Widget from "./core/model/widget";
 
-const widgets: Array<Widget> = reactive([]);
-let currentComponent: any = reactive({});
+const pageWidgets: any = reactive([]);
+let currentWidget: any = reactive({});
+const addWidget = async (com: Widget) => {
+  const widgetData = {
+    name: com.name,
+    configValue: com.configValue,
+  };
+  // push的是组件数据
+  pageWidgets.push(widgetData);
 
-const addWidget = (com: Widget) => {
-  widgets.push(com);
-  // currentComponent = com;
+  const container: HTMLElement | null =
+    document.getElementById("widget-canvas");
+  // 根据组件 数据 查找组件进行渲染
+  renderWidgetByData(widgetData, container);
+  
+  currentWidget = com;
 
-  // const container: HTMLElement | null =
-  //   document.getElementById("widget-canvas");
-  // const wrapper = document.createElement("div");
-  // const VNode = h(a.default);
-  // console.log("h", VNode);
-
-  // render(VNode, wrapper);
-  // container?.appendChild(wrapper);
+  console.log("currentWidget", currentWidget);
 };
 
 const save = () => {
-  console.log(widgets);
+  console.log(pageWidgets);
 };
+
+async function renderWidgetByData(w: any, container: HTMLElement | null) {
+  const wrapper = document.createElement("div");
+  const widgetlist = WidgetGroups.map((group) => group.components).flat();
+  const widget: any = widgetlist.find((widget) => widget.name == w.name);
+  const a: any = await widget.component();
+  const VNode = h(a.default, { ...widget.configValue });
+  render(VNode, wrapper);
+  container?.appendChild(wrapper);
+}
 </script>
 
 <template>
   <div class="page">
     <div class="material-container">
-      <h2>组件区</h2>
+      <!-- <h2>组件区</h2> -->
       <ul>
-        <li v-for="group in WidgetList" :key="group.title">
+        <li v-for="group in WidgetGroups" :key="group.title">
           {{ group.title }}
           <ul v-for="com in group.components">
             <li @click="addWidget(com)">
@@ -42,23 +55,21 @@ const save = () => {
     </div>
     <div class="canvas-container">
       <div class="canvas-header">
-        <h2>画布</h2>
+        <!-- <h2>画布</h2> -->
         <button style="display: block" @click="save">保存</button>
       </div>
-      <div class="widget-canvas">
-        <component
-          v-for="item in widgets"
-          :is="item.component"
-          v-model:config="item.configValue"
-        ></component>
+      <div class="widget-canvas" id="widget-canvas">
+        <!-- <component v-for="item in pageWidgets" :is="item.component"></component> -->
       </div>
     </div>
     <div class="setting-container">
-      <h2>设置面板</h2>
-      <component
-        :is="currentComponent.component"
-        v-model:config="currentComponent.configValue"
-      ></component>
+      <!-- <h2>设置面板</h2> -->
+      <div></div>
+      <template v-if="currentWidget.setComponent">
+        <component
+          :is="defineAsyncComponent(currentWidget.setComponent)"
+        ></component
+      ></template>
     </div>
   </div>
 </template>

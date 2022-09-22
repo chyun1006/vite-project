@@ -4,8 +4,8 @@ import SetView from "./HelloWorld.vue";
 
 const config: Widget = {
   name: "HelloWorld",
-  component: HelloWorld,
-  setComponent: SetView,
+  component: () => import("./HelloWorld.vue"),
+  setComponent: () => import("./HelloWorld.vue"),
   configValue: {
     msg: "HelloWorld",
     position: {
