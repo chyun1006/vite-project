@@ -17,9 +17,9 @@ const addWidget = async (com: Widget) => {
     document.getElementById("widget-canvas");
   // 根据组件 数据 查找组件进行渲染
   renderWidgetByData(widgetData, container);
-  
   currentWidget = com;
 
+  _renderSettingPanel();
   console.log("currentWidget", currentWidget);
 };
 
@@ -28,11 +28,22 @@ const save = () => {
 };
 
 async function renderWidgetByData(w: any, container: HTMLElement | null) {
-  const wrapper = document.createElement("div");
   const widgetlist = WidgetGroups.map((group) => group.components).flat();
   const widget: any = widgetlist.find((widget) => widget.name == w.name);
   const a: any = await widget.component();
-  const VNode = h(a.default, { ...widget.configValue });
+
+  _render(a.default, widget.configValue, container);
+}
+
+async function _renderSettingPanel() {
+  const container = document.getElementById("setting-container");
+  const a = await currentWidget.setComponent();
+  _render(a.default, {}, container);
+}
+
+function _render(widget: any, props: any, container: HTMLElement | null) {
+  const wrapper = document.createElement("div");
+  const VNode = h(widget, props);
   render(VNode, wrapper);
   container?.appendChild(wrapper);
 }
@@ -62,14 +73,12 @@ async function renderWidgetByData(w: any, container: HTMLElement | null) {
         <!-- <component v-for="item in pageWidgets" :is="item.component"></component> -->
       </div>
     </div>
-    <div class="setting-container">
+    <div class="setting-container" id="setting-container">
       <!-- <h2>设置面板</h2> -->
-      <div></div>
+      <!-- <div></div>
       <template v-if="currentWidget.setComponent">
-        <component
-          :is="defineAsyncComponent(currentWidget.setComponent)"
-        ></component
-      ></template>
+        <component :is="currentWidget.setComponent"></component
+      ></template> -->
     </div>
   </div>
 </template>
